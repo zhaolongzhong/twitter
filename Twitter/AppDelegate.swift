@@ -7,15 +7,59 @@
 //
 
 import UIKit
+import OAuthSwift
+import RealmSwift
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
+    let oauthTokenKey = "oathToken"
+    let oauthTokenSecretKey = "oauthTokenSecret"
+    let consumerKey = "xmnbz8aV49rka1EsbaLPphqTS"
+    let consumerSecret = "IUKtVsuOHAoCspH8teZzcp2MXTYK3DMZO13FX7JRFbU1fvih3I"
 
     var window: UIWindow?
-
-
+    
+    var realm: Realm!
+    
+    let realmConfig = Realm.Configuration(
+        // Set the new Schema version. This must be greater than the previously used version.
+        schemaVersion: 0,
+        migrationBlock: { migration, oldSchemaVersion in
+            migration.deleteData(forType: Tweet.className())
+            migration.deleteData(forType: User.className())
+        }
+    )
+    
+    static func getInstance() -> AppDelegate {
+        return UIApplication.shared.delegate as! AppDelegate
+    }
+    
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplicationLaunchOptionsKey: Any]?) -> Bool {
-        // Override point for customization after application launch.
+        self.window = UIWindow(frame: UIScreen.main.bounds)
+        
+        Realm.Configuration.defaultConfiguration = realmConfig
+        self.realm = try! Realm()
+        
+        let storyboard = UIStoryboard(name: "Main", bundle: nil)
+        let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+        let welcomeViewController = storyboard.instantiateViewController(withIdentifier: "WelcomeViewController") as! WelcomeViewController
+        let blueGray = UIColor(red: 101/255.0, green: 117/255.0, blue: 128/255.0, alpha: 1.0)
+        let lightBlue = UIColor(red: 42/255.0, green: 163/255.0, blue: 239/255.0, alpha: 1.0)
+        tabBarController.tabBar.tintColor = lightBlue
+        
+        tabBarController.tabBar.barStyle = .default
+        tabBarController.tabBar.barTintColor = UIColor.white
+        
+        self.window?.rootViewController = TwitterClient.getInstance() != nil ? tabBarController : welcomeViewController
+        self.window?.makeKeyAndVisible()
+        
+        return true
+    }
+    
+    func application(_ app: UIApplication, open url: URL, options: [UIApplicationOpenURLOptionsKey : Any] = [:]) -> Bool {
+        
+        TwitterClient.handleOpenUrl(url: url)
+
         return true
     }
 
