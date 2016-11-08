@@ -77,6 +77,42 @@ class TwitterClient: OAuthSwiftClient {
         }
     }
     
+    func verifyCredentials(success: @escaping (User) -> (), failure: @escaping (Error) -> ()) {
+        // todo: replace url with constant
+        let params = ["include_entities" : true]
+        print(params)
+        self.get("https://api.twitter.com/1.1/account/verify_credentials.json", parameters: params, success: { (data, response) -> Void in
+            guard let dictionary = try! JSONSerialization.jsonObject(with: data, options: []) as? NSDictionary else {
+                print("Response cannot be parsed as JSONArray.")
+                return
+            }
+            
+            print("credential: \(dictionary)")
+            let realm = AppDelegate.getInstance().realm!
+            let user = User()
+            
+            do {
+                try user.mapFrom(dictionary: dictionary)
+                user.isDefault = true
+                realm.beginWrite()
+                realm.add(user, update: true)
+                try realm.commitWrite()
+            } catch let error {
+                print(error)
+                realm.cancelWrite()
+            }
+            
+            let defaults = UserDefaults.standard
+            defaults.set(user.id, forKey: "DefaultUserIdKey")
+            defaults.synchronize()
+            
+            success(user)
+        }) { (error) -> Void in
+            print("there was an error: \(error)")
+            failure(error)
+        }
+    }
+    
     func homeTimeline(success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
         // todo: replace url with constant
         self.get("https://api.twitter.com/1.1/statuses/home_timeline.json", parameters: [:], success: { (data, response) -> Void in
@@ -85,7 +121,41 @@ class TwitterClient: OAuthSwiftClient {
                 return
             }
             
-            success(Tweet.mapFrom(array: dictionaries))
+            success(Tweet.mapFrom(array: dictionaries, type: Tweet.homeTimeline))
+        }) { (error) -> Void in
+            print("there was an error: \(error)")
+            failure(error)
+        }
+    }
+    
+    func mentionsTimeline(success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        // todo: replace url with constant
+        self.get("https://api.twitter.com/1.1/statuses/mentions_timeline.json", parameters: [:], success: { (data, response) -> Void in
+            guard let dictionaries = try! JSONSerialization.jsonObject(with: data, options: []) as? [NSDictionary] else {
+                print("Response cannot be parsed as JSONArray.")
+                return
+            }
+            
+            success(Tweet.mapFrom(array: dictionaries, type: Tweet.mentionsTimeline))
+        }) { (error) -> Void in
+            print("there was an error: \(error)")
+            failure(error)
+        }
+    }
+    
+    func userTimeline(screenName: String, success: @escaping ([Tweet]) -> (), failure: @escaping (Error) -> ()) {
+        // todo: replace url with constant
+        var params = [String: AnyObject]()
+        params["screen_name"] = screenName as AnyObject
+        params["include_entities"] = true as AnyObject
+        
+        self.get("https://api.twitter.com/1.1/statuses/user_timeline.json", parameters: params, success: { (data, response) -> Void in
+            guard let dictionaries = try! JSONSerialization.jsonObject(with: data, options: []) as? [NSDictionary] else {
+                print("Response cannot be parsed as JSONArray.")
+                return
+            }
+            
+            success(Tweet.mapFrom(array: dictionaries, type: Tweet.userTimeline))
         }) { (error) -> Void in
             print("there was an error: \(error)")
             failure(error)

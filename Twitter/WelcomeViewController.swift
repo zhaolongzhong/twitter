@@ -9,14 +9,15 @@
 import UIKit
 
 class WelcomeViewController: UIViewController {
+    let TAG = NSStringFromClass(WelcomeViewController.self)
 
     @IBOutlet var signUpButton: UIButton!
     @IBOutlet var loginButton: UIButton!
 
     let tabBarControllerSegueId = "TabBarControllerSegueId"
+    let mainViewControllerSegue = "MainViewControllerSegue"
     
     var twitterClient: TwitterClient?
-    
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -25,7 +26,8 @@ class WelcomeViewController: UIViewController {
         print("twitterClient is \(twitterClient)")
         
         if self.twitterClient != nil {
-            self.performSegue(withIdentifier: self.tabBarControllerSegueId, sender: nil)
+//            self.performSegue(withIdentifier: self.tabBarControllerSegueId, sender: nil)
+            self.performSegue(withIdentifier: self.mainViewControllerSegue, sender: nil)
         }
         
         signUpButton.backgroundColor = UIColor.white
@@ -33,7 +35,6 @@ class WelcomeViewController: UIViewController {
         signUpButton.layer.borderWidth = 1
         signUpButton.layer.borderColor = UIColor.white.cgColor
     }
-
     
     @IBAction func loginButtonAction(_ sender: AnyObject) {
         TwitterClient.login(success: { () -> () in

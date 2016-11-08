@@ -32,6 +32,11 @@
 		3A728E8F1DC7BD2E00177182 /* Kingfisher.framework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = 3A728E8B1DC7B7CB00177182 /* Kingfisher.framework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		3A728E911DC7E6EC00177182 /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A728E901DC7E6EC00177182 /* ComposeViewController.swift */; };
 		3A728E931DC804C200177182 /* TweetDetailViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3A728E921DC804C200177182 /* TweetDetailViewController.swift */; };
+		3AB88BF91DCEA4C6008036D0 /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB88BF81DCEA4C6008036D0 /* MainViewController.swift */; };
+		3AB88BFF1DCEB719008036D0 /* ProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB88BFE1DCEB719008036D0 /* ProfileViewController.swift */; };
+		3AB88C041DD056B6008036D0 /* MenuViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB88C031DD056B6008036D0 /* MenuViewController.swift */; };
+		3AB88C061DD172FC008036D0 /* UIImageEffects.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3AB88C051DD172FC008036D0 /* UIImageEffects.swift */; };
+		3AB88C0B1DD175B5008036D0 /* FXBlurView.m in Sources */ = {isa = PBXBuildFile; fileRef = 3AB88C0A1DD175B5008036D0 /* FXBlurView.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +101,13 @@
 		3A728E8B1DC7B7CB00177182 /* Kingfisher.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Kingfisher.framework; path = Carthage/Build/iOS/Kingfisher.framework; sourceTree = "<group>"; };
 		3A728E901DC7E6EC00177182 /* ComposeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
 		3A728E921DC804C200177182 /* TweetDetailViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = TweetDetailViewController.swift; sourceTree = "<group>"; };
+		3AB88BF81DCEA4C6008036D0 /* MainViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		3AB88BFE1DCEB719008036D0 /* ProfileViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProfileViewController.swift; sourceTree = "<group>"; };
+		3AB88C031DD056B6008036D0 /* MenuViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = MenuViewController.swift; sourceTree = "<group>"; };
+		3AB88C051DD172FC008036D0 /* UIImageEffects.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = UIImageEffects.swift; sourceTree = "<group>"; };
+		3AB88C081DD175B4008036D0 /* Twitter-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Twitter-Bridging-Header.h"; sourceTree = "<group>"; };
+		3AB88C091DD175B5008036D0 /* FXBlurView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = FXBlurView.h; sourceTree = "<group>"; };
+		3AB88C0A1DD175B5008036D0 /* FXBlurView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FXBlurView.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -158,6 +170,8 @@
 				3A3281721DC7B05800A63E4C /* Views */,
 				3A3281631DC5137600A63E4C /* Controllers */,
 				3A3281641DC5138800A63E4C /* Service */,
+				3AB88C051DD172FC008036D0 /* UIImageEffects.swift */,
+				3AB88C071DD175A1008036D0 /* Helpers */,
 				3A32811C1DC42D4B00A63E4C /* AppDelegate.swift */,
 				3A3281201DC42D4B00A63E4C /* Main.storyboard */,
 				3A3281231DC42D4B00A63E4C /* Assets.xcassets */,
@@ -202,6 +216,9 @@
 				3A32815C1DC4513D00A63E4C /* HomeViewController.swift */,
 				3A728E901DC7E6EC00177182 /* ComposeViewController.swift */,
 				3A728E921DC804C200177182 /* TweetDetailViewController.swift */,
+				3AB88C031DD056B6008036D0 /* MenuViewController.swift */,
+				3AB88BF81DCEA4C6008036D0 /* MainViewController.swift */,
+				3AB88BFE1DCEB719008036D0 /* ProfileViewController.swift */,
 			);
 			name = Controllers;
 			sourceTree = "<group>";
@@ -230,6 +247,16 @@
 				3A728E8B1DC7B7CB00177182 /* Kingfisher.framework */,
 			);
 			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		3AB88C071DD175A1008036D0 /* Helpers */ = {
+			isa = PBXGroup;
+			children = (
+				3AB88C091DD175B5008036D0 /* FXBlurView.h */,
+				3AB88C0A1DD175B5008036D0 /* FXBlurView.m */,
+				3AB88C081DD175B4008036D0 /* Twitter-Bridging-Header.h */,
+			);
+			name = Helpers;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -304,6 +331,7 @@
 					3A3281181DC42D4B00A63E4C = {
 						CreatedOnToolsVersion = 8.0;
 						DevelopmentTeam = Z6DQ796RKP;
+						LastSwiftMigration = 0800;
 						ProvisioningStyle = Automatic;
 					};
 					3A32812C1DC42D4B00A63E4C = {
@@ -406,8 +434,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				3A3281781DC7B1C000A63E4C /* InfiniteScrollActivityView.swift in Sources */,
+				3AB88C041DD056B6008036D0 /* MenuViewController.swift in Sources */,
 				3A32815B1DC450CE00A63E4C /* WelcomeViewController.swift in Sources */,
 				3A728E931DC804C200177182 /* TweetDetailViewController.swift in Sources */,
+				3AB88BF91DCEA4C6008036D0 /* MainViewController.swift in Sources */,
+				3AB88C0B1DD175B5008036D0 /* FXBlurView.m in Sources */,
+				3AB88C061DD172FC008036D0 /* UIImageEffects.swift in Sources */,
+				3AB88BFF1DCEB719008036D0 /* ProfileViewController.swift in Sources */,
 				3A3281561DC43C5A00A63E4C /* TwitterClient.swift in Sources */,
 				3A3281711DC5C2CE00A63E4C /* Media.swift in Sources */,
 				3A3281751DC7B09200A63E4C /* TweetCell.swift in Sources */,
@@ -567,6 +600,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = Z6DQ796RKP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -578,6 +612,8 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhaolongzhong.Twitter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Twitter/Twitter-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Debug;
@@ -586,6 +622,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				CLANG_ENABLE_MODULES = YES;
 				DEVELOPMENT_TEAM = Z6DQ796RKP;
 				FRAMEWORK_SEARCH_PATHS = (
 					"$(inherited)",
@@ -597,6 +634,7 @@
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = com.zhaolongzhong.Twitter;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_OBJC_BRIDGING_HEADER = "Twitter/Twitter-Bridging-Header.h";
 				SWIFT_VERSION = 3.0;
 			};
 			name = Release;

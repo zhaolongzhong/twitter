@@ -23,7 +23,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     let realmConfig = Realm.Configuration(
         // Set the new Schema version. This must be greater than the previously used version.
-        schemaVersion: 0,
+        schemaVersion: 3,
         migrationBlock: { migration, oldSchemaVersion in
             migration.deleteData(forType: Tweet.className())
             migration.deleteData(forType: User.className())
@@ -41,17 +41,24 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         self.realm = try! Realm()
         
         let storyboard = UIStoryboard(name: "Main", bundle: nil)
-        let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
+//        let tabBarController = storyboard.instantiateViewController(withIdentifier: "TabBarController") as! UITabBarController
         let welcomeViewController = storyboard.instantiateViewController(withIdentifier: "WelcomeViewController") as! WelcomeViewController
-        let blueGray = UIColor(red: 101/255.0, green: 117/255.0, blue: 128/255.0, alpha: 1.0)
-        let lightBlue = UIColor(red: 42/255.0, green: 163/255.0, blue: 239/255.0, alpha: 1.0)
-        tabBarController.tabBar.tintColor = lightBlue
-        
-        tabBarController.tabBar.barStyle = .default
-        tabBarController.tabBar.barTintColor = UIColor.white
-        
-        self.window?.rootViewController = TwitterClient.getInstance() != nil ? tabBarController : welcomeViewController
+        let mainViewController = storyboard.instantiateViewController(withIdentifier: "MainViewController") as! MainViewController
+//        let blueGray = UIColor(red: 101/255.0, green: 117/255.0, blue: 128/255.0, alpha: 1.0)
+//        let lightBlue = UIColor(red: 42/255.0, green: 163/255.0, blue: 239/255.0, alpha: 1.0)
+//        tabBarController.tabBar.tintColor = lightBlue
+//        
+//        tabBarController.tabBar.barStyle = .default
+//        tabBarController.tabBar.barTintColor = UIColor.white
+//        
+        self.window?.rootViewController = TwitterClient.getInstance() != nil ? mainViewController : welcomeViewController
         self.window?.makeKeyAndVisible()
+        
+        
+        
+//        let mainViewController = window!.rootViewController as! MainViewController
+//        let menuViewController = storyboard.instantiateViewController(withIdentifier: "MenuViewController") as! MenuViewController
+//        mainViewController.menuViewController = menuViewController
         
         return true
     }

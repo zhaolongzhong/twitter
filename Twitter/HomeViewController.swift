@@ -14,8 +14,14 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
 
     let composeViewControllerSegue = "ComposeViewControllerSegue"
     let tweetDetailViewControllerSegue = "TweetDetailViewControllerSegue"
+    let profileViewControllerSegue = "ProfileViewControllerSegue"
     let tweetCell = "TweetCell"
     
+    var type: String! {
+        didSet {
+            self.tweets = Tweet.getTweetsByType(type: self.type)
+        }
+    }
     var twitterClient: TwitterClient!
     var refreshControl: UIRefreshControl!
     var loadingMoreView:InfiniteScrollActivityView?
@@ -27,13 +33,36 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
             self.isMoreDataLoading = false
             
             // Stop the loading indicator
-            self.loadingMoreView!.stopAnimating()
+            self.loadingMoreView?.stopAnimating()
         }
     }
+    
+    var navBar: UINavigationBar!
     
     override func viewDidLoad() {
         super.viewDidLoad()
         self.twitterClient = TwitterClient.getInstance()
+        
+//        let lightBlue = UIColor(red: 42/255.0, green: 163/255.0, blue: 239/255.0, alpha: 1.0)
+//        self.navBar = UINavigationBar(frame: CGRect(x: 0, y: 0, width: self.view.frame.size.width, height: 64))
+//        self.navBar.tintColor = lightBlue
+//        self.view.addSubview(navBar);
+//        let navItem = UINavigationItem(title: "Twitter")
+//        let follow = UIBarButtonItem(image: UIImage(named:"follow"), style: .plain, target: nil, action: nil)
+//        let compose = UIBarButtonItem(image: UIImage(named: "compose"), style: .plain, target: nil, action: nil)
+//        let search = UIBarButtonItem(image: UIImage(named: "search"), style: .plain, target: nil, action: nil)
+//        
+//        navItem.leftBarButtonItem = follow
+//        navItem.rightBarButtonItems = [compose, search]
+//        let titleImageView = UIImageView(image: UIImage(named: "logo_blue"))
+//        titleImageView.isUserInteractionEnabled = true
+//        let recognizer = UITapGestureRecognizer(target: self, action: #selector(HomeViewController.titleImageViewTapped))
+//        titleImageView.addGestureRecognizer(recognizer)
+//        navItem.titleView = titleImageView
+//        
+//        navItem.leftBarButtonItem?.imageInsets = UIEdgeInsetsMake(0, 8, 0, 40)
+//        navItem.rightBarButtonItems?.first?.imageInsets = UIEdgeInsetsMake(0, -32, 0, -8)
+//        self.navBar.setItems([navItem], animated: false);
         
         let titleImageView = UIImageView(image: UIImage(named: "logo_blue"))
         titleImageView.isUserInteractionEnabled = true
@@ -51,6 +80,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         self.tableView.rowHeight = UITableViewAutomaticDimension
         self.tableView.estimatedRowHeight = 120
         self.tableView.keyboardDismissMode = .onDrag
+//        self.tableView.topAnchor.constraint(equalTo: self.view.topAnchor, constant: 64).isActive = true
         
         // Set up Infinite Scroll loading indicator
         let frame = CGRect(x: 0, y: tableView.contentSize.height, width: tableView.bounds.size.width, height: InfiniteScrollActivityView.defaultHeight)
@@ -68,8 +98,8 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         // add refresh control to table view
         self.tableView.insertSubview(refreshControl, at: 1)
         
-        
-        reloadHomeTimeline()
+//        reloadTimeline()
+        self.tweets = Tweet.getTweetsByType(type: self.type)
     }
 
     func invalidateViews() {
@@ -81,7 +111,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
-        reloadHomeTimeline()
+//        reloadTimeline()
     }
     
     func titleImageViewTapped() {
@@ -96,19 +126,12 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     // Updates the tableView with the new data
     // Hides the RefreshControl
     func refreshControlAction(refreshControl: UIRefreshControl) {
-        self.twitterClient.homeTimeline(success: { (tweets: [Tweet]) -> () in
-            print(tweets.count)
-            self.tweets = tweets
-            self.refreshControl.endRefreshing()
-        }) { (error: Error) -> () in
-            print(error)
-            self.refreshControl.endRefreshing()
-        }
-
+        self.type == Tweet.homeTimeline ? refreshHomeTimeline() : refreshMentionsTimeline()
     }
     
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let tweetDetailViewController = segue.destination as? TweetDetailViewController {
+            
             if let tableView = sender as? UITableView {
                 tweetDetailViewController.tweet = self.tweets![tableView.indexPathForSelectedRow!.row]
             }
@@ -117,6 +140,12 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         if let composeViewController = segue.destination as? ComposeViewController {
             if let tweetCell = sender as? TweetCell {
                 composeViewController.tweet = tweetCell.tweet
+            }
+        }
+        
+        if let profileViewController = segue.destination as? ProfileViewController {
+            if let tweetCell = sender as? TweetCell {
+                profileViewController.user = tweetCell.tweet.user
             }
         }
     }
@@ -142,6 +171,10 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
     }
     
     // MARK: - TweetCellDelegate
+    func tweetCell(tweetCell: TweetCell, profileDidClick user: User) {
+        performSegue(withIdentifier: self.profileViewControllerSegue, sender: tweetCell)
+    }
+    
     func tweetCell(tweetCell: TweetCell, replyDidClick: Bool) {
         performSegue(withIdentifier: self.composeViewControllerSegue, sender: tweetCell)
     }
@@ -150,7 +183,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //todo:
         self.twitterClient.retweet(tweetId: tweetCell.tweet.id, success: { (dictionary: NSDictionary) -> () in
             print(dictionary)
-            self.reloadHomeTimeline()
+            self.reloadTimeline()
         }) { (error: Error) -> () in
             print(error)
             
@@ -161,7 +194,7 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
         //todo: 
         self.twitterClient.favorite(tweetId: tweetCell.tweet.id, favorited: favorited, success: { (dictionary: NSDictionary) -> () in
             print(dictionary)
-            self.reloadHomeTimeline()
+            self.reloadTimeline()
         }) { (error: Error) -> () in
             print(error)
         }
@@ -191,16 +224,61 @@ class HomeViewController: UIViewController, UITableViewDataSource, UITableViewDe
 //            }
 //        }
 //    }
-
-
     
-    func reloadHomeTimeline() {
+    func reloadTimeline() {
+        switch self.type {
+        case Tweet.homeTimeline:
+            loadHomeTimeline()
+            break
+        case Tweet.mentionsTimeline:
+            loadMentionsTimeline()
+            break
+        default:
+            break
+        }
+    }
+    
+    func loadHomeTimeline() {
+        print("loadHomeTimeline")
         self.twitterClient.homeTimeline(success: { (tweets: [Tweet]) -> () in
-            print(tweets.count)
+            print("homeTimeline count: \(tweets.count)")
             self.tweets = tweets.sorted{ $0.0.createdAt > $0.1.createdAt }
         }) { (error: Error) -> () in
             print(error)
         }
+    }
+    
+    func loadMentionsTimeline() {
+        print("loadMentionsTimeline")
+        self.twitterClient.mentionsTimeline(success: { (tweets: [Tweet]) -> () in
+            print("mentionsTimeline count: \(tweets.count)")
+            self.tweets = tweets.sorted{ $0.0.createdAt > $0.1.createdAt }
+        }) { (error: Error) -> () in
+            print(error)
+        }
+    }
+    
+    func refreshHomeTimeline() {
+        self.twitterClient.homeTimeline(success: { (tweets: [Tweet]) -> () in
+            print("Home: \(tweets.count)")
+            self.tweets = tweets
+            self.refreshControl.endRefreshing()
+        }) { (error: Error) -> () in
+            print(error)
+            self.refreshControl.endRefreshing()
+        }
+    }
+    
+    func refreshMentionsTimeline() {
+        self.twitterClient.mentionsTimeline(success: { (tweets: [Tweet]) -> () in
+            print("Metions: \(tweets.count)")
+            self.tweets = tweets
+            self.refreshControl.endRefreshing()
+        }) { (error: Error) -> () in
+            print(error)
+            self.refreshControl.endRefreshing()
+        }
+
     }
     
 }

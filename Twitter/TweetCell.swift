@@ -10,6 +10,7 @@ import UIKit
 import Kingfisher
 
 protocol TweetCellDelegate: class {
+    func tweetCell(tweetCell: TweetCell, profileDidClick user: User)
     func tweetCell(tweetCell: TweetCell, replyDidClick: Bool)
     func tweetCell(tweetCell: TweetCell, retweetDidClick retweet: Bool)
     func tweetCell(tweetCell: TweetCell, favoriteDidClick favorited: Bool)
@@ -121,6 +122,11 @@ class TweetCell: UITableViewCell {
         self.messageView.isUserInteractionEnabled = true
         let messageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(TweetCell.messageViewTapped))
         self.messageView.addGestureRecognizer(messageViewRecognizer)
+        
+        
+        self.profileImageView.isUserInteractionEnabled = true
+        let profileImageViewRecognizer = UITapGestureRecognizer(target: self, action: #selector(TweetCell.profileImageViewTapped))
+        self.profileImageView.addGestureRecognizer(profileImageViewRecognizer)
     }
     
     override func setSelected(_ selected: Bool, animated: Bool) {
@@ -146,22 +152,6 @@ class TweetCell: UITableViewCell {
         self.retweetCountLabel.text = "\(count)"
         self.retweetCountLabel.isHidden = count == 0
         self.delegate?.tweetCell(tweetCell: self, retweetDidClick: !self.tweet.retweeted)
-        
-//        let alertController = UIAlertController(title: "", message: "", preferredStyle: .actionSheet)
-//        let retweetActionSheet = UIAlertAction(title: "Retweet", style: .default, handler: { (action) -> Void in
-//            // todo: implement
-//           
-//        })
-//        
-//        let quoteTweetActionSheet = UIAlertAction(title: "Quote Tweet", style: .default, handler: { (action) -> Void in
-//            // todo: implement
-//        })
-//        
-//        alertController.addAction(retweetActionSheet)
-//        alertController.addAction(quoteTweetActionSheet)
-//        alertController.addAction(UIAlertAction(title: "Cancel", style: .cancel))
-//        self.present(alertController, animated: true, completion: nil)
-        
     }
     
     
@@ -180,6 +170,10 @@ class TweetCell: UITableViewCell {
         // todo: implement
         print("message clicked")
         self.delegate?.tweetCell(tweetCell: self, messageDidClick: true)
+    }
+    
+    func profileImageViewTapped() {
+        self.delegate?.tweetCell(tweetCell: self, profileDidClick: self.tweet.user!)
     }
     
     func relativePast(for date : Date) -> String {
